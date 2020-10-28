@@ -1,0 +1,22 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+    url: jdbc:mysql://localhost:3306/promote?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+
+mybatis:
+  mapper-locations: classpath:mapping/*Mapper.xml
+  type-aliases-package: com.ibicd.promote.mybatis.domain
+
+
+## 在控制台显示SQL（配置mapper 接口的路径）
+logging:
+  level:
+    com:
+      ibicd:
+        promote:
+          mybatis:
+            mapper: debug
