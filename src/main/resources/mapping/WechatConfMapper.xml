@@ -1,23 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.ibicd.promote.mybatis.mapper.WechatConfMapper">
 
-    <resultMap id="confMap" type="com.ibicd.promote.mybatis.domain.WechatConf">
+    <resultMap id="confMap" type="com.ibicd.promote.miniApp.domain.WechatConf">
         <result column="id" jdbcType="INTEGER" property="id"/>
         <result column="app_id" jdbcType="VARCHAR" property="appId"/>
         <result column="app_sec" jdbcType="VARCHAR" property="appSecret"/>
     </resultMap>
 
-    <insert id="add" parameterType="com.ibicd.promote.mybatis.domain.WechatConf">
-        insert into we_conf(app_id,app_sec) values (#{appId},#{appSecret})
-    </insert>
-
     <select id="findByAppId" resultMap="confMap">
-        select * from we_conf where app_id = #{appId}
+        select *
+        from we_conf
+        where app_id = #{appId}
     </select>
-
-    <delete id="del">
-        delete we_conf where id=#{id}
-    </delete>
 
 </mapper>

@@ -1,6 +1,7 @@
 package com.ibicd.promote.time;
 
 
+import java.sql.Timestamp;
 import java.text.ParsePosition;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -15,7 +16,17 @@ import java.util.TimeZone;
 
 import org.springframework.util.StringUtils;
 
+/**
+ * 时间工具类
+ */
 public class TimeUtils {
+
+    public static void main(String[] args) {
+
+        Long time2 = 1604988316L;
+        Long time1 = 1605004200L;
+        System.out.println(isSameDay(time1, time2));
+    }
 
     private static String DEFAULT_ZONEID = "GMT+8";
 
@@ -43,6 +54,7 @@ public class TimeUtils {
         cal.set(Calendar.SECOND, cal.getActualMinimum(Calendar.SECOND));
         return cal.getTimeInMillis() / 1000;
     }
+
 
     /**
      * 获取当天23:59:59的时间戳
@@ -90,7 +102,8 @@ public class TimeUtils {
         final ParsePosition pos = new ParsePosition(0);
         for (String pattern : parsePatterns) {
             //appendPattern不可放在parseDefaulting后，会导致parseDefaulting失效
-            formatterBuilder = new DateTimeFormatterBuilder().parseLenient()
+            formatterBuilder = new DateTimeFormatterBuilder()
+                    .parseLenient()
                     .appendPattern(pattern)
                     .parseDefaulting(ChronoField.MONTH_OF_YEAR, 1)
                     .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
@@ -115,10 +128,10 @@ public class TimeUtils {
                 int zoneOffset = calendar.get(Calendar.ZONE_OFFSET);
                 return localDateTime.toInstant(ZoneOffset.ofTotalSeconds(zoneOffset / 1000)).getEpochSecond();
             } catch (DateTimeParseException ex) {
-                throw new RuntimeException("字符串格式时间转为时间戳失败！");
+
             }
         }
-        throw new RuntimeException("字符串格式时间转为时间戳失败！");
+        throw new RuntimeException("无法转换时间");
     }
 
     /**
@@ -131,4 +144,86 @@ public class TimeUtils {
 
         return TimeZone.getTimeZone(zoneId);
     }
+
+
+    /**
+     * 将指定时间戳的对应的hour时minutes 分转换为时间戳
+     *
+     * @param time
+     * @param hour
+     * @param minutes
+     * @return
+     */
+    public static Long convertTimestamp(Long time, int hour, int minutes) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(time);
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.MINUTE, minutes);
+        cal.set(Calendar.SECOND, 0);
+
+        Timestamp timestamp = new Timestamp(cal.getTimeInMillis());
+        return timestamp.getTime() / 1000;
+    }
+
+
+    /**
+     * 判断两个时间是否为同一天
+     *
+     * @param time1
+     * @param time2
+     * @return
+     */
+    public static boolean isSameDay(Long time1, Long time2) {
+
+        Calendar cal1 = Calendar.getInstance();
+        cal1.setTimeInMillis(time1 * 1000);
+
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTimeInMillis(time2 * 1000);
+
+        int days1 = cal1.get(Calendar.DAY_OF_YEAR);
+        int days2 = cal2.get(Calendar.DAY_OF_YEAR);
+
+        return days1 == days2;
+
+    }
+
+
+    /**
+     * 获取当前时间对应的这个月的第一天
+     *
+     * @param time
+     * @return
+     */
+    public static Long getFirstDayOfMonth(Long time) {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time * 1000);
+
+        int firstDay = calendar.getActualMinimum(Calendar.DAY_OF_MONTH);
+        int minimumHour = calendar.getActualMinimum(Calendar.HOUR_OF_DAY);
+        int minimum = calendar.getActualMinimum(Calendar.MINUTE);
+        int minSec = calendar.getActualMinimum(Calendar.SECOND);
+
+        calendar.set(Calendar.DAY_OF_MONTH, firstDay);
+        calendar.set(Calendar.HOUR_OF_DAY, minimumHour);
+        calendar.set(Calendar.MINUTE, minimum);
+        calendar.set(Calendar.SECOND, minSec);
+
+        return calendar.getTimeInMillis() / 1000;
+    }
+
+    /**
+     * 获取两个时间的相差天数
+     *
+     * @param time1
+     * @param time2
+     * @return
+     */
+    public static int getDayDiff(long time1, long time2) {
+
+        long diff = time1 - time2;
+        return (int) Math.ceil((Math.abs(diff) / (60 * 60 * 24)));
+    }
+
 }

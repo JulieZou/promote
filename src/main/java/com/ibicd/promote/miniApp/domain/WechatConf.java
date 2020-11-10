@@ -1,4 +1,4 @@
-package com.ibicd.promote.mybatis.domain;
+package com.ibicd.promote.miniApp.domain;
 
 
 /**
